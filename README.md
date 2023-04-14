@@ -1,2 +1,2 @@
 # radogost
-dolbaeb detection
+human detection software
