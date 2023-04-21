@@ -1,20 +1,21 @@
-syntax = "proto3"
-
-enum MessageType {
-    event = 0;
-    request = 1;
-    response = 2;
-}
-
-enum MessageKind {
-    detection = 0;
-    log = 1;
-    obj_data = 2;
-    footage = 3;
-}
+syntax = "proto3";
 
 message BaseMessage {
-    enum MessageType = 1;
-    enum MessageKind = 2;
+
+    enum MessageType {
+        event = 0;
+        request = 1;
+        response = 2;
+    }
+    
+    enum MessageKind {
+        detection = 0;
+        log = 1;
+        obj_data = 2;
+        footage = 3;
+    }
+    
+    MessageType message_type = 1;
+    MessageKind message_kind = 2;
     repeated bytes data = 3;
 }
