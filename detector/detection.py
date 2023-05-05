@@ -22,7 +22,7 @@ for vid in vid_list:
         # Display the resulting frame
             result = model(frame)
             result_plotted = result[0].plot()
-            cv2.imshow('Frame', result_plotted)
+            cv2.imshow('lmao', result_plotted)
             
         # Press Q on keyboard to exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
