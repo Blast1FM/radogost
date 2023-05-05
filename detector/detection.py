@@ -1,10 +1,12 @@
-from ultralytics import yolo
+from ultralytics import YOLO
 import cv2
 from pathlib import Path
 
 # Create a VideoCapture object and read from input file
 cwd = Path("./radogost/detector/")
 vid_list = cwd.glob('*.mp4')
+
+model = YOLO("yolov8n.pt")
 
 for vid in vid_list:
     capture = cv2.VideoCapture(str(vid))
@@ -18,7 +20,9 @@ for vid in vid_list:
         ret, frame = capture.read()
         if ret == True:
         # Display the resulting frame
-            cv2.imshow('Frame', frame)
+            result = model(frame)
+            result_plotted = result[0].plot()
+            cv2.imshow('Frame', result_plotted)
             
         # Press Q on keyboard to exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
