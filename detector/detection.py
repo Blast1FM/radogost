@@ -3,7 +3,7 @@ import cv2
 from pathlib import Path
 
 # Create a VideoCapture object and read from input file
-cwd = Path("./radogost/detector/")
+cwd = Path("./radogost/detector/sample_vids")
 vid_list = cwd.glob('*.mp4')
 
 model = YOLO("yolov8n.pt")
