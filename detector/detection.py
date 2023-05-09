@@ -15,23 +15,19 @@ for vid in vid_list:
         print("Error opening video file")
     # Read until video is completed
     while(capture.isOpened()):
-        
     # Capture frame-by-frame
-        ret, frame = capture.read()
-        if ret == True:
+        success, frame = capture.read()
+        if success == True:
         # Display the resulting frame
-            result = model(frame)
+            result = model(frame, device = 0)
             result_plotted = result[0].plot()
             cv2.imshow('lmao', result_plotted)
-            
         # Press Q on keyboard to exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
-    
     # Break the loop
         else:
             break
-    
     # When everything done, release
     # the video capture object
     capture.release()
