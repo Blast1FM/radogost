@@ -19,8 +19,8 @@ for vid in vid_list:
         success, frame = capture.read()
         if success == True:
         # Display the resulting frame
-            result = model(frame, device = 0)
-            result_plotted = result[0].plot()
+            result = model(frame, verbose=False, classes = [0]) #Only detect people
+            result_plotted = result[0].plot(probs=True, labels=True, masks=True)
             cv2.imshow('lmao', result_plotted)
         # Press Q on keyboard to exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
