@@ -8,6 +8,9 @@ vid_list = cwd.glob('*.mp4')
 
 model = YOLO("yolov8n.pt")
 
+class Detector:
+    pass
+
 for vid in vid_list:
     capture = cv2.VideoCapture(str(vid))
     # Check if camera opened successfully
@@ -19,7 +22,7 @@ for vid in vid_list:
         success, frame = capture.read()
         if success == True:
         # Display the resulting frame
-            result = model(frame, verbose=False, classes = [0]) #Only detect people
+            result = model(frame, agnostic_nms= True, verbose=False, classes = [0]) #Only detect people
             result_plotted = result[0].plot(probs=True, labels=True, masks=True)
             cv2.imshow('lmao', result_plotted)
         # Press Q on keyboard to exit

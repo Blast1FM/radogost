@@ -56,12 +56,12 @@ class TestYOLO(unittest.TestCase):
                 break
             result = model(frame, verbose=False, classes = [0]) #Обнаружение только людей
             result_plotted = result[0].plot(probs=True, labels=True, masks=True)
-            cv2.imshow('lmao', cv2.imshow('lmao', result_plotted)
+            cv2.imshow('lmao', cv2.imshow('lmao', result_plotted))
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
         # Проверка утверждений
         mock_VideoCapture.return_value.read.assert_called()
         self.assertFalse(success)
 
-if name == 'main':
+if __name__ == '__main__':
     unittest.main()
