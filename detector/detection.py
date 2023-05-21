@@ -1,39 +1,52 @@
-from ultralytics import YOLO
 import cv2
-from pathlib import Path
+import argparse
+from ultralytics import YOLO
 
-# Create a VideoCapture object and read from input file
-cwd = Path("./radogost/detector/sample_vids")
-vid_list = cwd.glob('*.mp4')
+class Detector():
 
-model = YOLO("yolov8n.pt")
-
-class Detector:
-    pass
-
-for vid in vid_list:
-    capture = cv2.VideoCapture(str(vid))
-    # Check if camera opened successfully
-    if (capture.isOpened()== False):
-        print("Error opening video file")
-    # Read until video is completed
-    while(capture.isOpened()):
-    # Capture frame-by-frame
-        success, frame = capture.read()
-        if success == True:
-        # Display the resulting frame
-            result = model(frame, agnostic_nms= True, verbose=False, classes = [0]) #Only detect people
-            result_plotted = result[0].plot(probs=True, labels=True, masks=True)
-            cv2.imshow('lmao', result_plotted)
-        # Press Q on keyboard to exit
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
-    # Break the loop
-        else:
-            break
-    # When everything done, release
-    # the video capture object
-    capture.release()
+    def parse_arguments(self) -> argparse.Namespace:
+        parser = argparse.ArgumentParser(description="YOLOv8")
+        parser.add_argument(
+            "--webcam-resolution", 
+            default=[1280, 720], 
+            nargs=2, 
+            type=int
+        )
+        args = parser.parse_args()
+        return args
     
-    # Closes all the frames
-    cv2.destroyAllWindows()
+    def setup_capture(self):
+        args = self.parse_arguments()
+        frame_width, frame_height = args.webcam_resolution
+
+        cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
+
+        return cap
+
+    def main(self):
+        
+        cap = self.setup_capture()
+
+        model = YOLO("yolov8n.pt")
+
+        while True:
+            ret, frame = cap.read()
+            if (ret):
+                result = model(frame, agnostic_nms=True, verbose = False, classes = [0], device="cpu")
+                if result[0]:
+                    result_plotted = result[0].plot(probs=True, labels=True, masks=True)
+                    #print(result[0].tojson())
+                    cv2.imshow("yolov8", result_plotted)
+                else:
+                    cv2.imshow("yolov8", frame)
+
+                if (cv2.waitKey(30) == 27):
+                    break
+            else:
+                print("Could not read frame")
+
+detector = Detector()
+
+detector.main()
