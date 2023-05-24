@@ -1,6 +1,7 @@
 import cv2
 import argparse
 from ultralytics import YOLO
+import producer
 
 class Detector():
 
@@ -25,7 +26,7 @@ class Detector():
 
         return cap
 
-    def main(self):
+    def start_detector(self):
         
         cap = self.setup_capture()
 
@@ -49,4 +50,4 @@ class Detector():
 
 detector = Detector()
 
-detector.main()
+detector.start_detector()
