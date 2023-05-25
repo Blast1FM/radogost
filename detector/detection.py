@@ -31,14 +31,60 @@ class Detector():
         cap = self.setup_capture()
 
         model = YOLO("yolov8n.pt")
+        msg_producer = producer.Producer()
 
+        prev_obj_id = None
         while True:
             ret, frame = cap.read()
             if (ret):
-                result = model(frame, agnostic_nms=True, verbose = False, classes = [0], device="cpu")
+                #Run inference
+                result = model.track(source=frame, agnostic_nms=True, verbose = False, classes = [0], device="cpu",persist=True)
                 if result[0]:
+                    #Plot results
                     result_plotted = result[0].plot(probs=True, labels=True, masks=True)
-                    #print(result[0].tojson())
+                    #Get tracking id tensor
+                    object_id = result[0].boxes.id
+                    #TODO This won't work in a real scenario as it takes complete match = need to check individual ids,
+                    #For which i need to properly convert the tensor
+
+                    #TODO throw this into a separate function maybe lol
+                    #Try to check if the object with this id has been in the previous frame
+                    #to avoid message spam
+                    if (object_id != prev_obj_id) & (object_id!=None):
+                        #TODO ONLY WORLS FOR SINGLE ELEMENT TENSOR
+                        try:
+                            #this WILL fail with multiple elements in tensor
+                            int_obj_id = object_id.item()
+                            #TODO replace print with msg_producer.send_message to detections queue when it works
+                            print(({
+                                "type":"appeared",
+                                "id":int_obj_id,
+                                "obj_data":result[0].tojson()
+                                }),
+                            "detections")
+                            prev_obj_id = object_id
+                        except AttributeError:
+                            pass
+                    #case when leaves the frame. Doesn't work 
+                    #TODO fix
+                    #TODO check what happens when a result is empty (what model.track returns)
+                    #Also look into boxes.is_track. Sometimes it detects a person but can't track it,
+                    #Boxes.is_track can help (it is a bool)
+                    # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/yolo/engine/results.py line 361
+                    elif (object_id != prev_obj_id) & (object_id==None):
+                        try:
+                            #this WILL fail with multiple elements in tensor
+                            int_obj_id = object_id.item()
+                            print(({
+                                "type":"left",
+                                "id":int_obj_id,
+                                "obj_data":result[0].tojson()
+                                }),
+                            "detections")
+                            prev_obj_id = object_id
+                        except AttributeError:
+                            pass
+                        
                     cv2.imshow("yolov8", result_plotted)
                 else:
                     cv2.imshow("yolov8", frame)
