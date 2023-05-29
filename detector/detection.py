@@ -31,7 +31,7 @@ class Detector():
         cap = self.setup_capture()
 
         model = YOLO("yolov8n.pt")
-        msg_producer = producer.Producer()
+        msg_producer = producer.MessageProducer()
 
         prev_obj_id = None
         while True:
