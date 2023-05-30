@@ -1,7 +1,8 @@
 import cv2
 import argparse
 from ultralytics import YOLO
-import producer
+import radogost.detector.message_producer as message_producer
+import video_server
 
 class Detector():
 
@@ -31,7 +32,9 @@ class Detector():
         cap = self.setup_capture()
 
         model = YOLO("yolov8n.pt")
-        msg_producer = producer.MessageProducer()
+        msg_producer = message_producer.MessageProducer()
+
+        server = video_server.VideoServer()
 
         prev_obj_id = None
         while True:
