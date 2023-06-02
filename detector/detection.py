@@ -1,7 +1,7 @@
 import cv2
 import argparse
 from ultralytics import YOLO
-import radogost.detector.message_producer as message_producer
+import message_producer
 import video_server
 
 class Detector():

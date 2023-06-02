@@ -6,13 +6,17 @@ class VideoServer():
         self.host = "localhost"
         self.port = 7473
     
-    async def send_frame(self,frame):
-        #convert to bytes first lmao eejit
-        return frame
+    async def convert_frame_to_bytes(self,frame):
+        return bytes(frame)
 
     async def producer_handler(self, websocket):
         while True:
-            message = await self.send_frame()
+            message = await self.convert_frame_to_bytes()
             await websocket.send(message)
 
-    #oi blyat implement this 
+    async def main(self):
+        srv = await asyncio.start_server(
+            self.producer_handler(srv), self.host, self.port)
+        await srv.serve_forever()
+    
+    #TODO implement in detection.py
