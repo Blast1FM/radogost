@@ -53,45 +53,46 @@ class Detector():
                     #TODO throw this into a separate function maybe lol
                     #Try to check if the object with this id has been in the previous frame
                     #to avoid message spam
-                    if (object_id != prev_obj_id) & (object_id!=None):
-                        #TODO ONLY WORLS FOR SINGLE ELEMENT TENSOR
-                        try:
-                            #this WILL fail with multiple elements in tensor
-                            int_obj_id = object_id.item()
-                            #TODO replace print with msg_producer.send_message to detections queue when it works
-                            print(({
-                                "type":"appeared",
-                                "id":int_obj_id,
-                                "obj_data":result[0].tojson()
-                                }),
-                            "detections")
-                            prev_obj_id = object_id
-                        except AttributeError:
-                            pass
-                    #case when leaves the frame. Doesn't work 
-                    #TODO fix
-                    #TODO check what happens when a result is empty (what model.track returns)
-                    #Also look into boxes.is_track. Sometimes it detects a person but can't track it,
-                    #Boxes.is_track can help (it is a bool)
-                    # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/yolo/engine/results.py line 361
-                    elif (object_id != prev_obj_id) & (object_id==None):
-                        try:
-                            #this WILL fail with multiple elements in tensor
-                            int_obj_id = object_id.item()
-                            print(({
-                                "type":"left",
-                                "id":int_obj_id,
-                                "obj_data":result[0].tojson()
-                                }),
-                            "detections")
-                            prev_obj_id = object_id
-                        except AttributeError:
-                            pass
-                        
+                    try:
+                        if (object_id != prev_obj_id) & (object_id!=None):
+                            #TODO ONLY WORLS FOR SINGLE ELEMENT TENSOR
+                            try:
+                                #this WILL fail with multiple elements in tensor
+                                int_obj_id = object_id.item()
+                                #TODO replace print with msg_producer.send_message to detections queue when it works
+                                print(({
+                                    "type":"appeared",
+                                    "id":int_obj_id,
+                                    "obj_data":result[0].tojson()
+                                    }),
+                                "detections")
+                                prev_obj_id = object_id
+                            except:
+                                print("detection event error: not implemented")
+                        #case when leaves the frame. Doesn't work 
+                        #TODO fix
+                        #TODO check what happens when a result is empty (what model.track returns)
+                        #Also look into boxes.is_track. Sometimes it detects a person but can't track it,
+                        #Boxes.is_track can help (it is a bool)
+                        #https://github.com/ultralytics/ultralytics/blob/main/ultralytics/yolo/engine/results.py line 361
+                        elif (object_id != prev_obj_id) & (object_id==None):
+                            try:
+                                #this WILL fail with multiple elements in tensor
+                                int_obj_id = object_id.item()
+                                print(({
+                                    "type":"left",
+                                    "id":int_obj_id,
+                                    "obj_data":result[0].tojson()
+                                    }),
+                                "detections")
+                                prev_obj_id = object_id
+                            except:
+                                print("detection event error: not implemented")
+                    except RuntimeError:
+                        print("logging multiple people is not implemented")
                     cv2.imshow("yolov8", result_plotted)
                 else:
                     cv2.imshow("yolov8", frame)
-
                 if (cv2.waitKey(30) == 27):
                     break
             else:
