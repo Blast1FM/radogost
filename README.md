@@ -1,2 +1,2 @@
 # radogost
-human detection software
+human detection meme (dead)
