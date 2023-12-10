@@ -2,7 +2,7 @@ import pika
 
 #Class to send detection data off to the message queue
 
-class Producer():
+class MessageProducer():
     #TODO implement evrything lol
     def __init__(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
